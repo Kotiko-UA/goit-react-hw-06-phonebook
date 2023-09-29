@@ -4,19 +4,15 @@ import { FindContacts } from '../FindContacts/FindContacts';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { PageWrapper } from './App.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { filterStatus, filters } from 'components/redux/filterSlice';
-import {
-  addContact,
-  contacts,
-  delContact,
-} from 'components/redux/contactSlice';
+import { addContact, delContact } from 'components/redux/contactSlice';
+import { filterStatus } from 'components/redux/filterSlice';
 
 export const App = () => {
-  const filterVel = useSelector(filters);
-  const contactsVel = useSelector(contacts);
+  const filter = useSelector(state => state.filters);
+  const contacts = useSelector(state => state.contacts);
   const dispatch = useDispatch();
   const onSubmit = ({ name, number }) => {
-    if (contactsVel.find(contact => contact.number === number)) {
+    if (contacts.find(contact => contact.number === number)) {
       Notify.failure(`${number} is alredy in contacts`);
       return;
     }
@@ -30,9 +26,9 @@ export const App = () => {
   const onFindUser = ({ target: { value } }) => {
     dispatch(filterStatus(value));
   };
-  const filterNumbers = contactsVel.filter(user =>
-    user.name.toLowerCase().includes(filterVel.toLowerCase())
-  );
+  // const filterNumbers = contacts.filter(user =>
+  //   user.name.toLowerCase().includes(filter.toLowerCase())
+  // );
 
   return (
     <PageWrapper>
@@ -40,7 +36,7 @@ export const App = () => {
       <FormPhoneBook onSubmit={onSubmit} />
       <h2>Contacts</h2>
       <FindContacts onFindUser={onFindUser} />
-      <Contacts onDelete={onDelete} users={filterNumbers} />
+      {/* <Contacts onDelete={onDelete} users={filterNumbers} /> */}
     </PageWrapper>
   );
 };
