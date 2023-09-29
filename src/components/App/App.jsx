@@ -1,50 +1,33 @@
-import { useEffect, useMemo, useState } from 'react';
 import { Contacts } from '../Contacts/Contacts';
 import { FormPhoneBook } from '../Form/Form';
-import { nanoid } from 'nanoid';
 import { FindContacts } from '../FindContacts/FindContacts';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { PageWrapper } from './App.styled';
-
-const initialContacts = () => {
-  const sevedUsers = localStorage.getItem('users');
-  if (sevedUsers !== null) {
-    return JSON.parse(sevedUsers);
-  } else {
-    return [];
-  }
-};
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact, delContact, filterStatus } from 'components/redax/reducer';
 
 export const App = () => {
-  const [contacts, setContacts] = useState(initialContacts);
-  const [filter, setFilter] = useState('');
-
+  const filter = useSelector(state => state.filters);
+  const contacts = useSelector(state => state.contacts);
+  const dispatch = useDispatch();
   const onSubmit = ({ name, number }) => {
-    if (contacts.find(contact => contact.name === name)) {
-      Notify.failure(`${name} is alredy in contacts`);
+    if (contacts.find(contact => contact.number === number)) {
+      Notify.failure(`${number} is alredy in contacts`);
       return;
     }
-    const newContact = { name, number, id: nanoid() };
-    setContacts(prevState => {
-      return [...prevState, newContact];
-    });
+    const newContact = { name, number };
+    dispatch(addContact(newContact));
   };
 
   const onDelete = delEl => {
-    setContacts(contacts.filter(contact => contact.id !== delEl));
+    dispatch(delContact(delEl));
   };
   const onFindUser = ({ target: { value } }) => {
-    setFilter(value);
+    dispatch(filterStatus(value));
   };
-  const filterNumbers = useMemo(() => {
-    return contacts.filter(user =>
-      user.name.toLowerCase().includes(filter.toLowerCase())
-    );
-  }, [contacts, filter]);
-
-  useEffect(() => {
-    localStorage.setItem('users', JSON.stringify(contacts));
-  }, [contacts]);
+  const filterNumbers = contacts.filter(user =>
+    user.name.toLowerCase().includes(filter.toLowerCase())
+  );
 
   return (
     <PageWrapper>
@@ -52,11 +35,7 @@ export const App = () => {
       <FormPhoneBook onSubmit={onSubmit} />
       <h2>Contacts</h2>
       <FindContacts onFindUser={onFindUser} />
-      <Contacts
-        onDelete={onDelete}
-        users={filterNumbers}
-        onFindUser={onFindUser}
-      />
+      <Contacts onDelete={onDelete} users={filterNumbers} />
     </PageWrapper>
   );
 };
