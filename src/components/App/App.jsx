@@ -4,7 +4,8 @@ import { FindContacts } from '../FindContacts/FindContacts';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { PageWrapper } from './App.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact, delContact, filterStatus } from 'components/redax/reducer';
+import { addContact, delContact } from 'components/redux/contactSlice';
+import { filterStatus } from 'components/redux/filterSlice';
 
 export const App = () => {
   const filter = useSelector(state => state.filters);
@@ -12,7 +13,7 @@ export const App = () => {
   const dispatch = useDispatch();
   const onSubmit = ({ name, number }) => {
     if (contacts.find(contact => contact.number === number)) {
-      Notify.failure(`${number} is alredy in contacts`);
+      Notify.failure(`${number} is already in contacts`);
       return;
     }
     const newContact = { name, number };
