@@ -26,9 +26,9 @@ export const App = () => {
   const onFindUser = ({ target: { value } }) => {
     dispatch(filterStatus(value));
   };
-  // const filterNumbers = contacts.filter(user =>
-  //   user.name.toLowerCase().includes(filter.toLowerCase())
-  // );
+  const filterNumbers = contacts.filter(user =>
+    user.name.toLowerCase().includes(filter.toLowerCase())
+  );
 
   return (
     <PageWrapper>
@@ -36,7 +36,7 @@ export const App = () => {
       <FormPhoneBook onSubmit={onSubmit} />
       <h2>Contacts</h2>
       <FindContacts onFindUser={onFindUser} />
-      {/* <Contacts onDelete={onDelete} users={filterNumbers} /> */}
+      <Contacts onDelete={onDelete} users={filterNumbers} />
     </PageWrapper>
   );
 };
